@@ -15,11 +15,17 @@ app.get('/api/stock/:symbol', async (req, res) => {
     const symbol = req.params.symbol;
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&apikey=${ALPHA_VANTAGE_API_KEY}`;
     const response = await axios.get(url);
+    const { data } = await axios.post('http://localhost:3002/api/analyze', {
+        timeSeriesData: response.data
+      });
+    res.json(data);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: error.toString() });
   }
 });
+
+  
 
 // Start the server
 const PORT = process.env.PORT || 3001;
